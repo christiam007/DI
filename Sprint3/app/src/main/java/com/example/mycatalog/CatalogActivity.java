@@ -14,11 +14,14 @@ public class CatalogActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_catalog);
 
-        Button btnLaunchDetail = findViewById(R.id.cataButton);
+        // Encuentra el botón
+        Button btnLaunchDetail = findViewById(R.id.detalleButton);
+
+        // Configura el listener de clics
         btnLaunchDetail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Lanza la actividad DetailActivity
                 Intent intent = new Intent(CatalogActivity.this, DetailActivity.class);
                 startActivity(intent);
             }

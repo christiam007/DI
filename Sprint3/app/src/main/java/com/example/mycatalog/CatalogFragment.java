@@ -22,14 +22,17 @@ public class CatalogFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static CatalogFragment newInstance() {  // Método corregido
-        return new CatalogFragment();
+    public static CatalogFragment newInstance(String param1, String param2) {
+        CatalogFragment fragment = new CatalogFragment();
+        return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        if (getArguments() != null) {
+        }
     }
 
     @Nullable
@@ -37,7 +40,9 @@ public class CatalogFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_catalog, container, false);
-        Button button = view.findViewById(R.id.naviFragment);
+
+        Button button = view.findViewById(R.id.navegaButton);
+
         button.setOnClickListener(v-> {
                     Intent intent = new Intent(requireContext(), DetailActivity.class);
                     startActivity(intent);

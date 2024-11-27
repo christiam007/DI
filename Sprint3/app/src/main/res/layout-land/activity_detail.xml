@@ -8,6 +8,7 @@
     tools:context=".DetailActivity">
 
 
+    <!-- Contenedor Izquierdo: Título e Imagen -->
     <LinearLayout
         android:id="@+id/leftPanel"
         android:orientation="vertical"
@@ -20,16 +21,16 @@
         android:gravity="center">
 
         <TextView
-            android:id="@+id/textTextViewdos"
+            android:id="@+id/textViewId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"
-            android:text="BIENVENIDO A SU PORTAL CHESSBASE"
+            android:text="Bienvenido a DetailActivity"
             android:gravity="center"
             android:textAlignment="center" />
 
         <ImageView
-            android:id="@+id/imagenImageView"
+            android:id="@+id/ImageViewId"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_marginTop="20dp"
@@ -37,7 +38,7 @@
 
     </LinearLayout>
 
-
+    <!-- Contenedor Derecho: Descripción y Botón -->
     <LinearLayout
         android:id="@+id/rightPanel"
         android:orientation="vertical"
@@ -51,7 +52,7 @@
         android:padding="16dp">
 
         <TextView
-            android:id="@+id/textViewId2"
+            android:id="@+id/textTextViewdos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
@@ -59,10 +60,11 @@
             android:gravity="center" />
 
         <Button
-            android:id="@+id/botonButton"
+            android:id="@+id/detalleButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Me gusta" />
+
 
     </LinearLayout>
 

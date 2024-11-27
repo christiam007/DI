@@ -3,21 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav"
-    app:startDestination="@id/page_inicio">
+    app:startDestination="@id/page_catalog">
 
     <fragment
-        android:id="@+id/page_inicio"
+        android:id="@+id/page_catalog"
         android:name="com.example.mycatalog.CatalogFragment"
-        tools:layout="@layout/fragment_catalog" />
+        tools:layout="@layout/fragment_catalog"/>
 
     <fragment
-        android:id="@+id/page_favoritos"
-        android:name="com.example.mycatalog.CatalogFragment"
-        />
-
-    <fragment
-        android:id="@+id/page_configuraciones"
-        android:name="com.example.mycatalog.CatalogFragment"
-        />
-
+        android:id="@+id/page_about"
+        android:name="com.example.mycatalog.AboutFragment"
+        tools:layout="@layout/fragment_about"/>
 </navigation>
