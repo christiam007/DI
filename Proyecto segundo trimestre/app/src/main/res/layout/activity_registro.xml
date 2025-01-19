@@ -51,6 +51,7 @@
             android:layout_marginTop="5dp">
 
             <EditText
+                android:id="@+id/etNombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ingrese Nombre"
@@ -76,6 +77,7 @@
             android:layout_marginTop="5dp">
 
             <EditText
+                android:id="@+id/etApellido"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ingrese Apellidos"
@@ -99,6 +101,7 @@
             android:layout_marginTop="5dp">
 
             <EditText
+                android:id="@+id/etCorreo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ingrese Correo"
@@ -122,6 +125,7 @@
             android:layout_marginTop="5dp">
 
             <EditText
+                android:id="@+id/etContrasena"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ingrese Contraseña"
@@ -145,6 +149,7 @@
             android:layout_marginTop="5dp">
 
             <EditText
+                android:id="@+id/etConfirmContrasena"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ingrese Confirmacion de Contraseña"
@@ -167,6 +172,7 @@
             android:layout_marginTop="5dp">
 
             <EditText
+                android:id="@+id/etTelefono"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ingrese Número de Teléfono"
@@ -189,6 +195,7 @@
             android:layout_marginTop="5dp">
 
             <EditText
+                android:id="@+id/etDirrecion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Ingrese Dirección"
@@ -198,7 +205,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
-
+            android:id="@+id/btnRgistrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
