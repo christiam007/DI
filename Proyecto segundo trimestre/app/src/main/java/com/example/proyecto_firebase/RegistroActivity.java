@@ -88,10 +88,10 @@ public class RegistroActivity extends AppCompatActivity {
         } else if (TextUtils.isEmpty(telefono)) {
             Toast.makeText(this, "Ingrese Número de Teléfono", Toast.LENGTH_SHORT).show();
         } else if (telefono.length() < 9) {
-            Toast.makeText(this, "El número de teléfono debe tener al menos 8 dígitos", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "El número de teléfono debe tener al menos 9 dígitos", Toast.LENGTH_SHORT).show();
         } else if (TextUtils.isEmpty(direccion)) {
             Toast.makeText(this, "Ingrese Dirección", Toast.LENGTH_SHORT).show();
-        } else if (direccion.length() < 20) {
+        } else if (direccion.length() < 12) {
             Toast.makeText(this, "La dirección es demasiado corta", Toast.LENGTH_SHORT).show();
         }else {
             registrar();
