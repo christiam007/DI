@@ -1,4 +1,4 @@
-package com.example.proyecto_firebase;
+package com.example.proyecto_firebase.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,6 +6,8 @@ import android.os.Handler;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.proyecto_firebase.R;
 
 
 public class SplashActivity extends AppCompatActivity {
