@@ -3,43 +3,44 @@ package com.example.proyecto_firebase.views;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.Patterns;
-
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-
+import androidx.lifecycle.ViewModelProvider;
 import com.example.proyecto_firebase.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.example.proyecto_firebase.viewmodels.RegisterViewModel;
 
-import java.util.HashMap;
 
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText etNombre, etApellido, etCorreo, etContrasena, etConfirmContrasena, etTelefono, etDirrecion;
-    Button btnRegistrar;
-
-
-    TextView lblLoginR;
-    FirebaseAuth firebaseAuth;
+    // Variables para los elementos de la interfaz
+    private EditText etNombre, etApellido, etCorreo, etContrasena,
+            etConfirmContrasena, etTelefono, etDirrecion;
+    private Button btnRegistrar;
+    private TextView lblLoginR;
     private ProgressDialog progressDialog;
-
-
-    String nombre = "", apellido = "", correo = "", contrasena = "", confirmarContrasena = "", telefono = "", direccion = "";
-
+    private RegisterViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro);
 
-        //ID DE CONTROLES
+        // Llamada a los métodos de inicialización
+        inicializarVistas();
+        configurarViewModel();
+        configurarObservadores();
+        configurarClickListeners();
+    }
+
+    /**
+     * Inicializa todas las vistas de la actividad
+     */
+    private void inicializarVistas() {
+        // Enlazar las vistas con sus IDs del layout
         etNombre = findViewById(R.id.etNombre);
         etApellido = findViewById(R.id.etApellido);
         etCorreo = findViewById(R.id.etCorreo);
@@ -48,92 +49,83 @@ public class RegisterActivity extends AppCompatActivity {
         etTelefono = findViewById(R.id.etTelefono);
         etDirrecion = findViewById(R.id.etDirrecion);
         btnRegistrar = findViewById(R.id.btnRgistrar);
-        lblLoginR = findViewById(R.id.btnRgistrar);
-
-        //Creacion de la Authenticacion
-        firebaseAuth = FirebaseAuth.getInstance();
-
-        //Progreso de Dialog se ejecute en Registro Activity
-        progressDialog = new ProgressDialog(RegisterActivity.this);
-        progressDialog.setTitle("Espere porfavor...");
-        progressDialog.setCanceledOnTouchOutside(false);
-
-        btnRegistrar.setOnClickListener(v -> validarDatos());
-
-
         lblLoginR = findViewById(R.id.lblLoginR);
-        lblLoginR.setOnClickListener(view -> startActivity(new Intent(RegisterActivity.this, LoginActivity.class)));
 
+        // Configurar el diálogo de progreso
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setTitle("Espere por favor...");
+        progressDialog.setCanceledOnTouchOutside(false);
     }
 
-    private void validarDatos() {
-        nombre = etNombre.getText().toString();
-        apellido = etApellido.getText().toString();
-        correo = etCorreo.getText().toString();
-        contrasena = etContrasena.getText().toString();
-        confirmarContrasena = etConfirmContrasena.getText().toString();
-        telefono = etTelefono.getText().toString();
-        direccion = etDirrecion.getText().toString();
-
-        if (TextUtils.isEmpty(nombre)) {
-            Toast.makeText(this, "El campo esta Vacio", Toast.LENGTH_SHORT).show();
-        } else if (TextUtils.isEmpty(apellido)) {
-            Toast.makeText(this, "Ingrese Apellido", Toast.LENGTH_SHORT).show();
-        } else if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
-            Toast.makeText(this, "Ingrese Correo Valido", Toast.LENGTH_SHORT).show();
-        } else if (TextUtils.isEmpty(contrasena) || contrasena.length()<6) {
-            Toast.makeText(this, "Ingrese Contraseña minimo 6 caracteres", Toast.LENGTH_SHORT).show();
-        } else if (TextUtils.isEmpty(confirmarContrasena)) {
-            Toast.makeText(this, "Ingrese Confirmar Contraseña minimo 6 caracteres", Toast.LENGTH_SHORT).show();
-        }else if(!contrasena.equals(confirmarContrasena) || confirmarContrasena.length()<6){
-            Toast.makeText(this, "Las contraseñas no coinciden", Toast.LENGTH_SHORT).show();
-        } else if (TextUtils.isEmpty(telefono)) {
-            Toast.makeText(this, "Ingrese Número de Teléfono", Toast.LENGTH_SHORT).show();
-        } else if (telefono.length() < 9) {
-            Toast.makeText(this, "El número de teléfono debe tener al menos 9 dígitos", Toast.LENGTH_SHORT).show();
-        } else if (TextUtils.isEmpty(direccion)) {
-            Toast.makeText(this, "Ingrese Dirección", Toast.LENGTH_SHORT).show();
-        } else if (direccion.length() < 12) {
-            Toast.makeText(this, "La dirección es demasiado corta", Toast.LENGTH_SHORT).show();
-        }else {
-            registrar();
-        }
-
+    /**
+     * Configura el ViewModel para la actividad
+     */
+    private void configurarViewModel() {
+        // Obtener la instancia del ViewModel
+        viewModel = new ViewModelProvider(this).get(RegisterViewModel.class);
     }
 
-    private void registrar() {
-        progressDialog.setMessage("Registrando al Usuario");
-        progressDialog.dismiss();
-
-        firebaseAuth.createUserWithEmailAndPassword(correo,contrasena).
-                addOnSuccessListener(authResult -> guardarUsuario()).addOnFailureListener(e -> Toast.makeText(RegisterActivity.this,"Ocurrio un problema, revisa los campos", Toast.LENGTH_SHORT).show());
-
-    }
-
-    private void guardarUsuario() {
-        progressDialog.setMessage("Guardando Informacion");
-        progressDialog.dismiss();
-
-        String uid = firebaseAuth.getUid();
-        HashMap<String , String> datosUsuario = new HashMap<>();
-        datosUsuario.put("uid", uid);
-        datosUsuario.put("nombre", nombre);
-        datosUsuario.put("apellido",apellido);
-        datosUsuario.put("correo", correo);
-        datosUsuario.put("contrasena",contrasena);
-        datosUsuario.put("telefono", telefono);
-        datosUsuario.put("direccion", direccion);
-
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Usuarios");
-        databaseReference.child(uid).setValue(datosUsuario).addOnSuccessListener(unused -> {
-            progressDialog.dismiss();
-            Toast.makeText(RegisterActivity.this,"Usuario Creado con Existo", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(RegisterActivity.this,DashboardActivity.class));
-            finish();
-        }).addOnFailureListener(e -> {
-            progressDialog.dismiss();
-            Toast.makeText(RegisterActivity.this,"Ocurrio un problema"+e.getMessage(), Toast.LENGTH_SHORT).show();
+    /**
+     * Configura los observadores para los cambios en el ViewModel
+     */
+    private void configurarObservadores() {
+        // Observar el resultado del registro
+        viewModel.obtenerResultadoRegistro().observe(this, resultado -> {
+            if ("SUCCESS".equals(resultado)) {
+                Toast.makeText(this, "Usuario Creado con Éxito", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(RegisterActivity.this, DashboardActivity.class));
+                finish();
+            } else {
+                Toast.makeText(this, resultado, Toast.LENGTH_SHORT).show();
+            }
         });
 
+        // Observar errores de validación
+        viewModel.obtenerErrorValidacion().observe(this, error ->
+                Toast.makeText(this, error, Toast.LENGTH_SHORT).show());
+
+        // Observar el estado de carga
+        viewModel.obtenerEstadoCarga().observe(this, cargando -> {
+            if (cargando) {
+                progressDialog.setMessage("Registrando Usuario...");
+                progressDialog.show();
+            } else {
+                progressDialog.dismiss();
+            }
+        });
+    }
+
+    /**
+     * Configura los listeners para los eventos de click
+     */
+    private void configurarClickListeners() {
+        // Click en el botón de registro
+        btnRegistrar.setOnClickListener(v -> {
+            // Obtener los valores de los campos
+            String nombre = etNombre.getText().toString();
+            String apellido = etApellido.getText().toString();
+            String correo = etCorreo.getText().toString();
+            String contrasena = etContrasena.getText().toString();
+            String confirmarContrasena = etConfirmContrasena.getText().toString();
+            String telefono = etTelefono.getText().toString();
+            String direccion = etDirrecion.getText().toString();
+
+            // Llamar al método de registro en el ViewModel
+            viewModel.registrarUsuario(nombre, apellido, correo, contrasena,
+                    confirmarContrasena, telefono, direccion);
+        });
+
+        // Click en el enlace para ir al login
+        lblLoginR.setOnClickListener(view ->
+                startActivity(new Intent(RegisterActivity.this, LoginActivity.class)));
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        // Cerrar el diálogo de progreso si está abierto al destruir la actividad
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+        }
     }
 }
