@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Proyecto_Firebase</string>
+    <string name="imagen_pelicula">URL de la imagen</string>
 </resources>
