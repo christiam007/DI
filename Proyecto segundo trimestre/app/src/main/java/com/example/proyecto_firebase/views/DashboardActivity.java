@@ -3,103 +3,94 @@ package com.example.proyecto_firebase.views;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.bumptech.glide.Glide;
+import com.example.proyecto_firebase.views.DetailActivity;
+//import com.example.proyecto_firebase.DetailActivity;
 import com.example.proyecto_firebase.R;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
-public class DashboardActivity extends AppCompatActivity {
-    Button btnCerrarSesion;
-    FirebaseAuth firebaseAuth;
-    FirebaseUser firebaseUser;
-    DatabaseReference databaseReference;
-    TextView tvTitulo, tvDescripcion;
-    ImageView ivPelicula;
+import com.example.proyecto_firebase.databinding.ActivityDashboardBinding;
+import com.example.proyecto_firebase.adapters.PeliculaAdapter;
+import com.example.proyecto_firebase.models.Pelicula;
+import com.example.proyecto_firebase.viewmodels.DashboardViewModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+import java.util.ArrayList;
+import java.util.List;
+public class DashboardActivity extends AppCompatActivity implements PeliculaAdapter.OnPeliculaClickListener {
+    private ActivityDashboardBinding binding;
+    private DashboardViewModel dashboardViewModel;
+    private PeliculaAdapter peliculaAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
+        binding.setLifecycleOwner(this);
 
-        // Inicializar Firebase
-        firebaseAuth = FirebaseAuth.getInstance();
-        firebaseUser = firebaseAuth.getCurrentUser();
-        databaseReference = FirebaseDatabase.getInstance().getReference().child("peliculas");
+        // Inicializar ViewModel
+        dashboardViewModel = new ViewModelProvider(this).get(DashboardViewModel.class);
 
-        // Inicializar vistas
-        btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
-        tvTitulo = findViewById(R.id.tvTitulo);
-        tvDescripcion = findViewById(R.id.tvDescripcion);
-        ivPelicula = findViewById(R.id.ivPelicula);
+        // Configurar RecyclerView
+        setupRecyclerView();
 
-        // Cargar datos desde Firebase
-        cargarPelicula();
+        // Observar cambios en los datos
+        observeViewModel();
 
-        btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
+        // Configurar listeners
+        setupListeners();
+
+        // Cargar datos
+        dashboardViewModel.cargarPeliculas();
+    }
+
+    private void setupRecyclerView() {
+        peliculaAdapter = new PeliculaAdapter(new ArrayList<>(), this); // Pasar this como listener
+        binding.recyclerViewPeliculas.setLayoutManager(new LinearLayoutManager(this));
+        binding.recyclerViewPeliculas.setAdapter(peliculaAdapter);
+    }
+
+    private void observeViewModel() {
+        dashboardViewModel.getPeliculas().observe(this, new Observer<List<Pelicula>>() {
             @Override
-            public void onClick(View v) {
-                cierreSesion();
+            public void onChanged(List<Pelicula> peliculas) {
+                if (peliculas != null) {
+                    peliculaAdapter.setPeliculas(peliculas);
+                }
+            }
+        });
+
+        dashboardViewModel.getNavigateToLogin().observe(this, shouldNavigate -> {
+            if (shouldNavigate) {
+                startActivity(new Intent(DashboardActivity.this, LoginActivity.class));
+                finish();
             }
         });
     }
 
-    private void cargarPelicula() {
-        // Obtener solo el primer elemento
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("peliculas").child("2");
-        Log.d("firebase", databaseReference.getDatabase().toString());
-
-
-        ValueEventListener userListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                // Obtener los datos
-                String titulo = dataSnapshot.child("titulo").getValue(String.class);
-                String descripcion = dataSnapshot.child("descripcion").getValue(String.class);
-                String imageUrl = dataSnapshot.child("imagen").getValue(String.class);
-
-                // Mostrar los datos en la UI
-                tvTitulo.setText(titulo);
-                tvDescripcion.setText(descripcion);
-
-
-                // Cargar imagen usando Glide
-                Glide.with(DashboardActivity.this)
-                        .load(imageUrl)
-                        .into(ivPelicula);
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w("Firebase", "Error al leer datos", databaseError.toException());
-            }
-        };
-
-        databaseReference.addListenerForSingleValueEvent(userListener);
-
-
+    private void setupListeners() {
+        binding.btnCerrarSesion.setOnClickListener(v -> {
+            dashboardViewModel.cerrarSesion();
+            Toast.makeText(this, "Cerraste Sesión Exitosamente", Toast.LENGTH_SHORT).show();
+        });
     }
 
-    private void cierreSesion() {
-        firebaseAuth.signOut();
-        startActivity(new Intent(DashboardActivity.this, MainActivity.class));
-        Toast.makeText(this, "Cerraste Sesion Exitosamente", Toast.LENGTH_SHORT).show();
-        finish();
+    @Override
+    public void onPeliculaClick(Pelicula pelicula) {
+        // Navegar a DetailActivity cuando se hace click en una película
+        Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("titulo", pelicula.getTitulo());
+        intent.putExtra("descripcion", pelicula.getDescripcion());
+        intent.putExtra("imagen", pelicula.getImagen());
+        startActivity(intent);
     }
 }

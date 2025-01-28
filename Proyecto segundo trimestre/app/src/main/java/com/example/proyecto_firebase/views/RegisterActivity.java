@@ -20,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 
 
-public class RegistroActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
     EditText etNombre, etApellido, etCorreo, etContrasena, etConfirmContrasena, etTelefono, etDirrecion;
     Button btnRegistrar;
@@ -54,7 +54,7 @@ public class RegistroActivity extends AppCompatActivity {
         firebaseAuth = FirebaseAuth.getInstance();
 
         //Progreso de Dialog se ejecute en Registro Activity
-        progressDialog = new ProgressDialog(RegistroActivity.this);
+        progressDialog = new ProgressDialog(RegisterActivity.this);
         progressDialog.setTitle("Espere porfavor...");
         progressDialog.setCanceledOnTouchOutside(false);
 
@@ -62,7 +62,7 @@ public class RegistroActivity extends AppCompatActivity {
 
 
         lblLoginR = findViewById(R.id.lblLoginR);
-        lblLoginR.setOnClickListener(view -> startActivity(new Intent(RegistroActivity.this, MainActivity.class)));
+        lblLoginR.setOnClickListener(view -> startActivity(new Intent(RegisterActivity.this, LoginActivity.class)));
 
     }
 
@@ -106,7 +106,7 @@ public class RegistroActivity extends AppCompatActivity {
         progressDialog.dismiss();
 
         firebaseAuth.createUserWithEmailAndPassword(correo,contrasena).
-                addOnSuccessListener(authResult -> guardarUsuario()).addOnFailureListener(e -> Toast.makeText(RegistroActivity.this,"Ocurrio un problema, revisa los campos", Toast.LENGTH_SHORT).show());
+                addOnSuccessListener(authResult -> guardarUsuario()).addOnFailureListener(e -> Toast.makeText(RegisterActivity.this,"Ocurrio un problema, revisa los campos", Toast.LENGTH_SHORT).show());
 
     }
 
@@ -127,12 +127,12 @@ public class RegistroActivity extends AppCompatActivity {
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("Usuarios");
         databaseReference.child(uid).setValue(datosUsuario).addOnSuccessListener(unused -> {
             progressDialog.dismiss();
-            Toast.makeText(RegistroActivity.this,"Usuario Creado con Existo", Toast.LENGTH_SHORT).show();
-            startActivity(new Intent(RegistroActivity.this,DashboardActivity.class));
+            Toast.makeText(RegisterActivity.this,"Usuario Creado con Existo", Toast.LENGTH_SHORT).show();
+            startActivity(new Intent(RegisterActivity.this,DashboardActivity.class));
             finish();
         }).addOnFailureListener(e -> {
             progressDialog.dismiss();
-            Toast.makeText(RegistroActivity.this,"Ocurrio un problema"+e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(RegisterActivity.this,"Ocurrio un problema"+e.getMessage(), Toast.LENGTH_SHORT).show();
         });
 
     }
