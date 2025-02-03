@@ -1,6 +1,8 @@
 package com.example.proyecto_firebase.adapters;
 
+import android.view.HapticFeedbackConstants;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -12,12 +14,10 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import java.util.List;
 
-
 public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.PeliculaViewHolder> {
     private List<Pelicula> peliculas;
     private OnPeliculaClickListener clickListener;
 
-    // Interfaz para el click listener
     public interface OnPeliculaClickListener {
         void onPeliculaClick(Pelicula pelicula);
     }
@@ -66,13 +66,32 @@ public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.Pelicu
         public void bind(Pelicula pelicula, OnPeliculaClickListener listener) {
             binding.setPelicula(pelicula);
 
-            // Configurar el click listener
+            // Configurar accesibilidad del ítem completo
+            binding.getRoot().setContentDescription(
+                    "Película " + pelicula.getTitulo() + ". " +
+                            pelicula.getDescripcion() + ". Toca dos veces para ver detalles.");
+
+            // Configurar accesibilidad para la imagen
+            binding.ivPelicula.setContentDescription("Portada de la película " + pelicula.getTitulo());
+            binding.ivPelicula.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+            // Configurar accesibilidad para los textos
+            binding.tvTitulo.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+            binding.tvDescripcion.setImportantForAccessibility(View.IMPORTANT_FOR_ACCESSIBILITY_YES);
+
+            // Hacer el ítem focuseable para TalkBack
+            binding.getRoot().setFocusable(true);
+            binding.getRoot().setClickable(true);
+
+            // Configurar click listener con retroalimentación táctil
             binding.getRoot().setOnClickListener(v -> {
+                v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
                 if (listener != null) {
                     listener.onPeliculaClick(pelicula);
                 }
             });
 
+            // Cargar imagen con Glide manteniendo accesibilidad
             Glide.with(binding.getRoot().getContext())
                     .load(pelicula.getImagen())
                     .centerCrop()
@@ -83,4 +102,3 @@ public class PeliculaAdapter extends RecyclerView.Adapter<PeliculaAdapter.Pelicu
         }
     }
 }
-

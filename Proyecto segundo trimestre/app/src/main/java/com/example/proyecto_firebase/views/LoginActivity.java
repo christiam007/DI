@@ -3,7 +3,9 @@ package com.example.proyecto_firebase.views;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-
+import android.view.HapticFeedbackConstants;
+import android.view.View;
+import android.view.accessibility.AccessibilityEvent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -12,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import com.example.proyecto_firebase.R;
 import com.example.proyecto_firebase.viewmodels.LoginViewModel;
-
 
 public class LoginActivity extends AppCompatActivity {
     private EditText etCorreoL, etContrasenaL;
@@ -29,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         configurarViewModel();
         configurarObservadores();
         configurarClickListeners();
+        configurarAccesibilidad();
     }
 
     private void inicializarVistas() {
@@ -53,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
             dialogoProgreso.dismiss();
             if (usuarioFirebase != null) {
                 // Login exitoso
-                startActivity(new Intent(LoginActivity.this, DashboardActivity.class)); // Cambiar a DashboardActivity
+                startActivity(new Intent(LoginActivity.this, DashboardActivity.class));
                 finish();
             }
         });
@@ -63,6 +65,9 @@ public class LoginActivity extends AppCompatActivity {
             dialogoProgreso.dismiss();
             if (error != null) {
                 Toast.makeText(LoginActivity.this, error, Toast.LENGTH_SHORT).show();
+                // Anunciar error para accesibilidad
+                View rootView = findViewById(android.R.id.content);
+                rootView.announceForAccessibility(error);
             }
         });
 
@@ -71,6 +76,9 @@ public class LoginActivity extends AppCompatActivity {
             if (estaCargando != null) {
                 if (estaCargando) {
                     dialogoProgreso.show();
+                    // Anunciar para accesibilidad
+                    View rootView = findViewById(android.R.id.content);
+                    rootView.announceForAccessibility("Iniciando sesión");
                 } else {
                     dialogoProgreso.dismiss();
                 }
@@ -79,16 +87,65 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void configurarClickListeners() {
-        btnIngresarL.setOnClickListener(v -> intentarLogin());
+        btnIngresarL.setOnClickListener(v -> {
+            // Añadir retroalimentación háptica
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            intentarLogin();
+        });
 
         lblRegistrar.setOnClickListener(v -> {
+            // Añadir retroalimentación háptica
+            v.performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
             startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
         });
+    }
+
+    private void configurarAccesibilidad() {
+        // Configurar delegate de accesibilidad para el campo de usuario
+        etCorreoL.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+                super.onPopulateAccessibilityEvent(host, event);
+                if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED) {
+                    if (etCorreoL.getText().toString().isEmpty()) {
+                        host.announceForAccessibility(getString(R.string.login_empty_user));
+                    }
+                }
+            }
+        });
+
+        // Configurar delegate de accesibilidad para el campo de contraseña
+        etContrasenaL.setAccessibilityDelegate(new View.AccessibilityDelegate() {
+            @Override
+            public void onPopulateAccessibilityEvent(View host, AccessibilityEvent event) {
+                super.onPopulateAccessibilityEvent(host, event);
+                if (event.getEventType() == AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED) {
+                    if (etContrasenaL.getText().toString().isEmpty()) {
+                        host.announceForAccessibility(getString(R.string.login_empty_password));
+                    }
+                }
+            }
+        });
+
+        // Configurar TraversalOrder para una navegación lógica
+        etCorreoL.setAccessibilityTraversalAfter(R.id.imageView2);
+        etContrasenaL.setAccessibilityTraversalAfter(R.id.etCorreoL);
+        btnIngresarL.setAccessibilityTraversalAfter(R.id.etContrasenaL);
+        lblRegistrar.setAccessibilityTraversalAfter(R.id.btnIngresarL);
     }
 
     private void intentarLogin() {
         String correo = etCorreoL.getText().toString().trim();
         String contrasena = etContrasenaL.getText().toString().trim();
+
+        if (correo.isEmpty() || contrasena.isEmpty()) {
+            String mensaje = getString(R.string.login_error_empty_fields);
+            Toast.makeText(this, mensaje, Toast.LENGTH_SHORT).show();
+            View rootView = findViewById(android.R.id.content);
+            rootView.announceForAccessibility(mensaje);
+            return;
+        }
+
         loginViewModel.login(correo, contrasena);
     }
 

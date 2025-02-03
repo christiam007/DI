@@ -38,10 +38,13 @@ public class DetailActivity extends AppCompatActivity {
         pelicula.setTitulo(getIntent().getStringExtra("titulo"));
         pelicula.setDescripcion(getIntent().getStringExtra("descripcion"));
         pelicula.setImagen(getIntent().getStringExtra("imagen"));
-        pelicula.generateId(); // Genera el ID basado en el título
+        pelicula.generateId();
 
         // Establecer los datos en el binding
         binding.setPelicula(pelicula);
+
+        // Configurar accesibilidad para los elementos de detalle
+        setupAccessibility();
 
         // Cargar la imagen con Glide
         if (pelicula.getImagen() != null && !pelicula.getImagen().isEmpty()) {
@@ -58,18 +61,32 @@ public class DetailActivity extends AppCompatActivity {
         setupFabClick();
     }
 
+    private void setupAccessibility() {
+        // Configurar descripciones para accesibilidad
+        binding.ivPeliculaDetalle.setContentDescription(
+                "Imagen detallada de " + pelicula.getTitulo());
+
+        binding.tvTituloDetalle.setContentDescription(
+                "Título: " + pelicula.getTitulo());
+
+        binding.tvDescripcionDetalle.setContentDescription(
+                "Descripción: " + pelicula.getDescripcion());
+    }
+
     private void checkFavoriteStatus() {
         favoritosRef.child(pelicula.getId()).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 isFavorite = dataSnapshot.exists() && dataSnapshot.getValue(Pelicula.class) != null;
                 updateFabIcon();
+                updateFabAccessibility();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Toast.makeText(DetailActivity.this,
                         "Error al verificar favoritos", Toast.LENGTH_SHORT).show();
+                announceForAccessibility("Error al verificar estado de favoritos");
             }
         });
     }
@@ -80,16 +97,29 @@ public class DetailActivity extends AppCompatActivity {
         );
     }
 
+    private void updateFabAccessibility() {
+        if (binding != null && binding.fabFavorito != null) {
+            String description = isFavorite ?
+                    getString(R.string.fab_remove_favorite) :
+                    getString(R.string.fab_add_favorite);
+            binding.fabFavorito.setContentDescription(description);
+            binding.fabFavorito.announceForAccessibility(description);
+        }
+    }
+
     private void setupFabClick() {
         binding.fabFavorito.setOnClickListener(v -> {
+            v.performHapticFeedback(android.view.HapticFeedbackConstants.VIRTUAL_KEY);
             if (isFavorite) {
                 // Eliminar de favoritos
                 favoritosRef.child(pelicula.getId()).removeValue()
                         .addOnSuccessListener(aVoid -> {
+                            announceForAccessibility("Eliminado de favoritos");
                             Toast.makeText(this, "Eliminado de favoritos",
                                     Toast.LENGTH_SHORT).show();
                         })
                         .addOnFailureListener(e -> {
+                            announceForAccessibility("Error al eliminar de favoritos");
                             Toast.makeText(this, "Error al eliminar de favoritos",
                                     Toast.LENGTH_SHORT).show();
                         });
@@ -98,14 +128,20 @@ public class DetailActivity extends AppCompatActivity {
                 pelicula.setFavorite(true);
                 favoritosRef.child(pelicula.getId()).setValue(pelicula)
                         .addOnSuccessListener(aVoid -> {
+                            announceForAccessibility("Agregado a favoritos");
                             Toast.makeText(this, "Agregado a favoritos",
                                     Toast.LENGTH_SHORT).show();
                         })
                         .addOnFailureListener(e -> {
+                            announceForAccessibility("Error al agregar a favoritos");
                             Toast.makeText(this, "Error al agregar a favoritos",
                                     Toast.LENGTH_SHORT).show();
                         });
             }
         });
+    }
+
+    private void announceForAccessibility(String message) {
+        binding.getRoot().announceForAccessibility(message);
     }
 }

@@ -11,7 +11,8 @@
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/background">
 
         <ScrollView
             android:layout_width="match_parent"
@@ -27,7 +28,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="500dp"
                     android:scaleType="centerCrop"
-                    android:contentDescription="@string/imagen_pelicula"/>
+                    android:contentDescription="@{`Imagen detallada de ` + pelicula.titulo}"
+                    android:importantForAccessibility="yes"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -41,7 +43,9 @@
                         android:layout_height="wrap_content"
                         android:textSize="24sp"
                         android:textStyle="bold"
+                        android:textColor="@color/text_primary"
                         android:text="@{pelicula.titulo}"
+                        android:importantForAccessibility="yes"
                         tools:text="Título de la Película"/>
 
                     <TextView
@@ -50,7 +54,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
                         android:textSize="16sp"
+                        android:textColor="@color/text_secondary"
                         android:text="@{pelicula.descripcion}"
+                        android:importantForAccessibility="yes"
                         tools:text="Descripción detallada de la película"/>
                 </LinearLayout>
             </LinearLayout>
@@ -62,7 +68,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_margin="16dp"
-            android:contentDescription="Agregar a favoritos"
+            android:contentDescription="Botón de favoritos"
+            android:importantForAccessibility="yes"
+            app:tint="@color/white"
+            app:backgroundTint="@color/accent"
             app:srcCompat="@drawable/ic_favorite_border"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
