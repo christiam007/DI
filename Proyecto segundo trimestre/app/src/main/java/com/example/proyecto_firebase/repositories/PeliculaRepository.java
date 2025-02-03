@@ -1,13 +1,18 @@
 package com.example.proyecto_firebase.repositories;
 
+import androidx.annotation.NonNull;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.example.proyecto_firebase.models.Pelicula;
+
 import java.util.ArrayList;
 
 public class PeliculaRepository {
@@ -31,7 +36,10 @@ public class PeliculaRepository {
     }
 
     public void toggleFavorito(String peliculaId, OnCompleteListener<Void> listener) {
-        if (peliculaId == null || peliculaId.isEmpty()) return;
+        if (peliculaId == null || peliculaId.isEmpty()) {
+            listener.onComplete(Tasks.forException(new Exception("ID de película inválido")));
+            return;
+        }
 
         String userId = firebaseAuth.getCurrentUser().getUid();
         DatabaseReference favoritosRef = usuariosRef
@@ -41,7 +49,6 @@ public class PeliculaRepository {
         favoritosRef.get().addOnSuccessListener(snapshot -> {
             ArrayList<String> favoritosIds = new ArrayList<>();
 
-            // Obtener lista actual de IDs favoritos
             if (snapshot.exists()) {
                 for (DataSnapshot child : snapshot.getChildren()) {
                     String id = child.getValue(String.class);
@@ -51,14 +58,14 @@ public class PeliculaRepository {
                 }
             }
 
-            // Si no estaba en la lista, lo agregamos
             if (!favoritosIds.contains(peliculaId)) {
                 favoritosIds.add(peliculaId);
             }
 
-            // Guardar la lista actualizada
             favoritosRef.setValue(favoritosIds).addOnCompleteListener(listener);
-        });
+        }).addOnFailureListener(e ->
+                listener.onComplete(Tasks.forException(e))
+        );
     }
 
     public void isFavorite(String peliculaId, OnSuccessListener<Boolean> listener) {
@@ -86,7 +93,6 @@ public class PeliculaRepository {
                 });
     }
 
-    // Métodos para peliculas
     public void getAllPeliculas(ValueEventListener listener) {
         peliculasRef.addListenerForSingleValueEvent(listener);
     }
@@ -94,5 +100,35 @@ public class PeliculaRepository {
     public void getPelicula(String peliculaId, ValueEventListener listener) {
         if (peliculaId == null || peliculaId.isEmpty()) return;
         peliculasRef.child(peliculaId).addListenerForSingleValueEvent(listener);
+    }
+
+    public void removeFavorito(String peliculaId, OnCompleteListener<Void> listener) {
+        if (peliculaId == null || peliculaId.isEmpty()) {
+            listener.onComplete(Tasks.forException(new Exception("ID de película inválido")));
+            return;
+        }
+
+        String userId = firebaseAuth.getCurrentUser().getUid();
+        usuariosRef
+                .child(userId)
+                .child("favoritos")
+                .child(peliculaId)
+                .removeValue()
+                .addOnCompleteListener(listener);
+    }
+
+    public void addFavorito(String peliculaId, OnCompleteListener<Void> listener) {
+        if (peliculaId == null || peliculaId.isEmpty()) {
+            listener.onComplete(Tasks.forException(new Exception("ID de película inválido")));
+            return;
+        }
+
+        String userId = firebaseAuth.getCurrentUser().getUid();
+        usuariosRef
+                .child(userId)
+                .child("favoritos")
+                .child(peliculaId)
+                .setValue(true)
+                .addOnCompleteListener(listener);
     }
 }

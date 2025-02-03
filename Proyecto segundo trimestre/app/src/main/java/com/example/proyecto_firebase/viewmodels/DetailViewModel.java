@@ -12,12 +12,16 @@ import com.google.firebase.database.ValueEventListener;
 
 public class DetailViewModel extends ViewModel {
     private MutableLiveData<Boolean> esFavorito;
+    private MutableLiveData<Boolean> isLoading;
+    private MutableLiveData<String> error;
     private DatabaseReference favoritosRef;
     private String peliculaId;
     private String userId;
 
     public DetailViewModel() {
         esFavorito = new MutableLiveData<>(false);
+        isLoading = new MutableLiveData<>(false);
+        error = new MutableLiveData<>();
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         favoritosRef = FirebaseDatabase.getInstance().getReference()
                 .child("usuarios")
@@ -25,38 +29,58 @@ public class DetailViewModel extends ViewModel {
                 .child("favoritos");
     }
 
-    public void setPeliculaId(String titulo) {
-        this.peliculaId = titulo; // Usando el título como ID por ahora
-        verificarSiEsFavorito();
-    }
-
     public LiveData<Boolean> getEsFavorito() {
         return esFavorito;
     }
 
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public LiveData<String> getError() {
+        return error;
+    }
+
+    public void setPeliculaId(String peliculaId) {
+        this.peliculaId = peliculaId;
+        verificarSiEsFavorito();
+    }
+
     private void verificarSiEsFavorito() {
+        isLoading.setValue(true);
         favoritosRef.child(peliculaId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 esFavorito.setValue(dataSnapshot.exists());
+                isLoading.setValue(false);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Manejar error
+                error.setValue("Error al verificar favorito: " + databaseError.getMessage());
+                isLoading.setValue(false);
             }
         });
     }
 
     public void toggleFavorito() {
+        isLoading.setValue(true);
         Boolean favorito = esFavorito.getValue();
         if (favorito != null) {
             if (favorito) {
-                // Eliminar de favoritos
-                favoritosRef.child(peliculaId).removeValue();
+                favoritosRef.child(peliculaId).removeValue()
+                        .addOnSuccessListener(aVoid -> isLoading.setValue(false))
+                        .addOnFailureListener(e -> {
+                            error.setValue("Error al eliminar de favoritos: " + e.getMessage());
+                            isLoading.setValue(false);
+                        });
             } else {
-                // Agregar a favoritos
-                favoritosRef.child(peliculaId).setValue(true);
+                favoritosRef.child(peliculaId).setValue(true)
+                        .addOnSuccessListener(aVoid -> isLoading.setValue(false))
+                        .addOnFailureListener(e -> {
+                            error.setValue("Error al agregar a favoritos: " + e.getMessage());
+                            isLoading.setValue(false);
+                        });
             }
         }
     }

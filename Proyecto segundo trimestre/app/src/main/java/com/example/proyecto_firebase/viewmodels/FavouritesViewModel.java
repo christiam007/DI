@@ -17,10 +17,14 @@ public class FavouritesViewModel extends ViewModel {
     private MutableLiveData<List<Pelicula>> favoritos;
     private DatabaseReference favoritosRef;
     private DatabaseReference peliculasRef;
+    private MutableLiveData<Boolean> isLoading;
+    private MutableLiveData<String> error;
     private String userId;
 
     public FavouritesViewModel() {
         favoritos = new MutableLiveData<>(new ArrayList<>());
+        isLoading = new MutableLiveData<>(false);
+        error = new MutableLiveData<>();
         userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         favoritosRef = FirebaseDatabase.getInstance().getReference()
                 .child("usuarios")
@@ -33,20 +37,35 @@ public class FavouritesViewModel extends ViewModel {
         return favoritos;
     }
 
+    public LiveData<Boolean> getIsLoading() {
+        return isLoading;
+    }
+
+    public LiveData<String> getError() {
+        return error;
+    }
+
     public void cargarFavoritos() {
+        isLoading.setValue(true);
         favoritosRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Pelicula> listaFavoritos = new ArrayList<>();
-                for (DataSnapshot favoritoSnapshot : dataSnapshot.getChildren()) {
-                    String peliculaId = favoritoSnapshot.getKey();
-                    cargarPeliculaFavorita(peliculaId, listaFavoritos);
+                try {
+                    List<Pelicula> listaFavoritos = new ArrayList<>();
+                    for (DataSnapshot favoritoSnapshot : dataSnapshot.getChildren()) {
+                        String peliculaId = favoritoSnapshot.getKey();
+                        cargarPeliculaFavorita(peliculaId, listaFavoritos);
+                    }
+                } catch (Exception e) {
+                    error.setValue("Error al cargar favoritos: " + e.getMessage());
+                    isLoading.setValue(false);
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Manejar error
+                error.setValue("Error en la base de datos: " + databaseError.getMessage());
+                isLoading.setValue(false);
             }
         });
     }
@@ -55,17 +74,43 @@ public class FavouritesViewModel extends ViewModel {
         peliculasRef.child(peliculaId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Pelicula pelicula = dataSnapshot.getValue(Pelicula.class);
-                if (pelicula != null) {
-                    listaFavoritos.add(pelicula);
-                    favoritos.setValue(listaFavoritos);
+                try {
+                    Pelicula pelicula = dataSnapshot.getValue(Pelicula.class);
+                    if (pelicula != null) {
+                        pelicula.setId(dataSnapshot.getKey());
+                        pelicula.setFavorite(true);
+                        listaFavoritos.add(pelicula);
+                        favoritos.setValue(listaFavoritos);
+                    }
+                } catch (Exception e) {
+                    error.setValue("Error al procesar película favorita: " + e.getMessage());
+                } finally {
+                    isLoading.setValue(false);
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // Manejar error
+                error.setValue("Error al cargar película favorita: " + databaseError.getMessage());
+                isLoading.setValue(false);
             }
         });
+    }
+
+    public void toggleFavorito(Pelicula pelicula) {
+        isLoading.setValue(true);
+        favoritosRef.child(pelicula.getId()).removeValue()
+                .addOnSuccessListener(aVoid -> {
+                    List<Pelicula> currentList = favoritos.getValue();
+                    if (currentList != null) {
+                        currentList.remove(pelicula);
+                        favoritos.setValue(currentList);
+                    }
+                    isLoading.setValue(false);
+                })
+                .addOnFailureListener(e -> {
+                    error.setValue("Error al eliminar de favoritos: " + e.getMessage());
+                    isLoading.setValue(false);
+                });
     }
 }
