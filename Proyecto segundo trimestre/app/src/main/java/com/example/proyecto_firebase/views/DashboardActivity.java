@@ -1,4 +1,3 @@
-
 package com.example.proyecto_firebase.views;
 
 import android.content.Intent;
@@ -11,10 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import com.example.proyecto_firebase.views.DetailActivity;
-//import com.example.proyecto_firebase.DetailActivity;
 import com.example.proyecto_firebase.R;
-
 import com.example.proyecto_firebase.databinding.ActivityDashboardBinding;
 import com.example.proyecto_firebase.adapters.PeliculaAdapter;
 import com.example.proyecto_firebase.models.Pelicula;
@@ -23,9 +19,6 @@ import com.example.proyecto_firebase.viewmodels.DashboardViewModel;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import java.util.ArrayList;
-import java.util.List;
 public class DashboardActivity extends AppCompatActivity implements PeliculaAdapter.OnPeliculaClickListener {
     private ActivityDashboardBinding binding;
     private DashboardViewModel dashboardViewModel;
@@ -54,7 +47,7 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
     }
 
     private void setupRecyclerView() {
-        peliculaAdapter = new PeliculaAdapter(new ArrayList<>(), this); // Pasar this como listener
+        peliculaAdapter = new PeliculaAdapter(new ArrayList<>(), this);
         binding.recyclerViewPeliculas.setLayoutManager(new LinearLayoutManager(this));
         binding.recyclerViewPeliculas.setAdapter(peliculaAdapter);
     }
@@ -78,9 +71,15 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
     }
 
     private void setupListeners() {
+        // Listener para el botón de cerrar sesión
         binding.btnCerrarSesion.setOnClickListener(v -> {
             dashboardViewModel.cerrarSesion();
             Toast.makeText(this, "Cerraste Sesión Exitosamente", Toast.LENGTH_SHORT).show();
+        });
+
+        // Listener para el botón de favoritos
+        binding.btnFavoritos.setOnClickListener(v -> {
+            startActivity(new Intent(DashboardActivity.this, FavouritesActivity.class));
         });
     }
 
@@ -88,6 +87,7 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
     public void onPeliculaClick(Pelicula pelicula) {
         // Navegar a DetailActivity cuando se hace click en una película
         Intent intent = new Intent(this, DetailActivity.class);
+        intent.putExtra("id", pelicula.getId());
         intent.putExtra("titulo", pelicula.getTitulo());
         intent.putExtra("descripcion", pelicula.getDescripcion());
         intent.putExtra("imagen", pelicula.getImagen());
