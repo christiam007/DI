@@ -15,6 +15,8 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.proyecto_firebase.R;
 import com.example.proyecto_firebase.viewmodels.LoginViewModel;
 
+import java.util.Objects;
+
 public class LoginActivity extends AppCompatActivity {
     private EditText etCorreoL, etContrasenaL;
     private Button btnIngresarL;
@@ -25,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).hide(); //Oculta el título de la aplicación
         setContentView(R.layout.login_main);
         inicializarVistas();
         configurarViewModel();

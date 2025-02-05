@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.proyecto_firebase.R;
 import com.example.proyecto_firebase.viewmodels.RegisterViewModel;
 
+import java.util.Objects;
 
 
 public class RegisterActivity extends AppCompatActivity {
@@ -27,6 +28,7 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).hide(); //Oculta el título de la aplicación
         setContentView(R.layout.activity_registro);
 
         // Llamada a los métodos de inicialización

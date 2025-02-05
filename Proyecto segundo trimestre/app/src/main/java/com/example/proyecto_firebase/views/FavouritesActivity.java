@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FavouritesActivity extends AppCompatActivity implements PeliculaAdapter.OnPeliculaClickListener {
     private ActivityFavouritesBinding binding;
@@ -29,6 +30,7 @@ public class FavouritesActivity extends AppCompatActivity implements PeliculaAda
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).hide(); //Oculta el título de la aplicación
         binding = DataBindingUtil.setContentView(this, R.layout.activity_favourites);
 
         // Inicializar Firebase

@@ -15,6 +15,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.Objects;
+
 public class DetailActivity extends AppCompatActivity {
     private ActivityDetailBinding binding;
     private DatabaseReference favoritosRef;
@@ -24,6 +26,7 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).hide(); //Oculta el título de la aplicación
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
 
         // Inicializar Firebase

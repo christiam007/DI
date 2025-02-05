@@ -19,6 +19,7 @@ import com.example.proyecto_firebase.viewmodels.DashboardViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class DashboardActivity extends AppCompatActivity implements PeliculaAdapter.OnPeliculaClickListener {
     private ActivityDashboardBinding binding;
@@ -33,6 +34,7 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
         }
 
         super.onCreate(savedInstanceState);
+        Objects.requireNonNull(getSupportActionBar()).hide(); //Oculta el título de la aplicación
         binding = DataBindingUtil.setContentView(this, R.layout.activity_dashboard);
         binding.setLifecycleOwner(this);
 
