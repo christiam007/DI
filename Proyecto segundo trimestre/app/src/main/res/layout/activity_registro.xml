@@ -18,7 +18,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Registrar Usuario "
+            android:text="@string/registro_titulo"
             android:textStyle="bold"
             android:textSize="25sp"
             android:gravity="center"/>
@@ -31,10 +31,7 @@
             app:lottie_fileName="mixer.json"
             app:lottie_autoPlay="true"
             android:layout_gravity="center_horizontal"
-            app:lottie_loop="false">
-
-        </com.airbnb.lottie.LottieAnimationView>
-
+            app:lottie_loop="false"/>
 
         <TextView
             android:layout_width="match_parent"
@@ -42,25 +39,21 @@
             android:layout_marginTop="25dp"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Nombre"
-            />
+            android:text="@string/registro_label_nombre"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etNombre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese Nombre"
+                android:hint="@string/registro_hint_nombre"
                 android:inputType="text"
-                android:padding="15dp"
-                android:textColorHint="#546E7A"
-                tools:ignore="HardcodedText" />
-
-
+                android:padding="15dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -69,22 +62,21 @@
             android:layout_marginTop="15dp"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Apellidos"/>
+            android:text="@string/registro_label_apellidos"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etApellido"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese Apellidos"
+                android:hint="@string/registro_hint_apellidos"
                 android:inputType="text"
-                android:padding="15dp"
-                tools:ignore="HardcodedText" />
-
+                android:padding="15dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -93,21 +85,21 @@
             android:layout_marginTop="15dp"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Correo"/>
+            android:text="@string/registro_label_correo"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etCorreo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese Correo"
+                android:hint="@string/registro_hint_correo"
                 android:inputType="textEmailAddress"
-                android:padding="15dp"
-                tools:ignore="HardcodedText,VisualLintTextFieldSize" />
+                android:padding="15dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -116,22 +108,22 @@
             android:layout_marginTop="15dp"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Contraseña"/>
+            android:text="@string/registro_label_password"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             app:passwordToggleEnabled="true"
-            android:layout_marginTop="5dp">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etContrasena"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese Contraseña"
+                android:hint="@string/registro_hint_password"
                 android:inputType="textPassword"
                 android:padding="15dp"/>
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -140,22 +132,22 @@
             android:layout_marginTop="15dp"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Confirmar Contraseña"/>
+            android:text="@string/registro_label_confirm_password"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
             app:passwordToggleEnabled="true"
-            android:layout_marginTop="5dp">
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etConfirmContrasena"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese Confirmacion de Contraseña"
+                android:hint="@string/registro_hint_confirm_password"
                 android:inputType="textPassword"
                 android:padding="15dp"/>
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -164,21 +156,21 @@
             android:layout_marginTop="15dp"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Teléfono"/>
+            android:text="@string/registro_label_telefono"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etTelefono"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese Número de Teléfono"
+                android:hint="@string/registro_hint_telefono"
                 android:inputType="phone"
                 android:padding="15dp"/>
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -187,21 +179,21 @@
             android:layout_marginTop="15dp"
             android:textStyle="bold"
             android:textSize="17sp"
-            android:text="Dirección"/>
+            android:text="@string/registro_label_direccion"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
+            android:layout_marginTop="5dp"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
 
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDirrecion"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Ingrese Dirección"
+                android:hint="@string/registro_hint_direccion"
                 android:inputType="textPostalAddress"
                 android:padding="15dp"/>
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -211,8 +203,7 @@
             android:layout_marginStart="15dp"
             android:layout_marginTop="45dp"
             android:padding="15dp"
-            android:text="Registrar Usuario"
-            tools:ignore="DuplicateSpeakableTextCheck,VisualLintButtonSize" />
+            android:text="@string/registro_btn_registrar"/>
 
         <TextView
             android:id="@+id/lblLoginR"
@@ -221,8 +212,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
-            android:text="Volver a Ingreso"
-            tools:ignore="HardcodedText" />
+            android:text="@string/registro_volver_login"/>
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 </ScrollView>
