@@ -24,7 +24,6 @@ public class DetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide(); //Oculta el título de la aplicación
         binding = DataBindingUtil.setContentView(this, R.layout.activity_detail);
 
         // Inicializar Firebase
@@ -55,7 +54,7 @@ public class DetailActivity extends AppCompatActivity {
                     .into(binding.ivPeliculaDetalle);
         }
 
-        // Verificar si es favorito
+        // Verificar si es favorito!!
         checkFavoriteStatus();
 
         // Configurar el click del FAB

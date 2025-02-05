@@ -30,8 +30,6 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
         // Aplicar el tema según las preferencias antes de crear la activity
         if (ThemeHelper.isDarkMode(this)) {
             setTheme(R.style.Theme_App);
-        } else {
-            setTheme(R.style.Theme_App); // Tema claro por defecto
         }
 
         super.onCreate(savedInstanceState);
@@ -64,7 +62,8 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
         // Configurar listener para cambios en el switch
         binding.switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
             ThemeHelper.setDarkMode(this, isChecked);
-            recreate(); // Recrear la activity para aplicar el nuevo tema
+            // Recrear la activity para aplicar el nuevo tema
+            recreate();
         });
     }
 
@@ -75,22 +74,23 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
     }
 
     private void observeViewModel() {
-        dashboardViewModel.getPeliculas().observe(this, peliculas -> {
-            if (peliculas != null) {
-                peliculaAdapter.setPeliculas(peliculas);
+        dashboardViewModel.getPeliculas().observe(this, new Observer<List<Pelicula>>() {
+            @Override
+            public void onChanged(List<Pelicula> peliculas) {
+                if (peliculas != null) {
+                    peliculaAdapter.setPeliculas(peliculas);
+                }
             }
         });
 
         dashboardViewModel.getNavigateToLogin().observe(this, shouldNavigate -> {
             if (shouldNavigate) {
-                // Resetear el tema antes de navegar al login
-                ThemeHelper.resetThemeOnLogout(this);
                 startActivity(new Intent(DashboardActivity.this, LoginActivity.class));
                 finish();
             }
         });
 
-        // Observar errores
+        // Observar errores si los hay
         dashboardViewModel.getError().observe(this, error -> {
             if (error != null && !error.isEmpty()) {
                 Toast.makeText(this, error, Toast.LENGTH_LONG).show();
@@ -99,14 +99,13 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
 
         // Observar estado de carga
         dashboardViewModel.getIsLoading().observe(this, isLoading -> {
-            // Implementar lógica de loading si es necesario
+            // Aquí puedes mostrar u ocultar un indicador de carga si lo tienes
         });
     }
 
     private void setupListeners() {
         // Listener para el botón de cerrar sesión
         binding.btnCerrarSesion.setOnClickListener(v -> {
-            ThemeHelper.resetThemeOnLogout(this);
             dashboardViewModel.cerrarSesion();
             Toast.makeText(this, "Cerraste Sesión Exitosamente", Toast.LENGTH_SHORT).show();
         });
@@ -119,6 +118,7 @@ public class DashboardActivity extends AppCompatActivity implements PeliculaAdap
 
     @Override
     public void onPeliculaClick(Pelicula pelicula) {
+        // Navegar a DetailActivity cuando se hace click en una película
         Intent intent = new Intent(this, DetailActivity.class);
         intent.putExtra("id", pelicula.getId());
         intent.putExtra("titulo", pelicula.getTitulo());

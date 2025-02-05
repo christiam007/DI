@@ -27,7 +27,6 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().hide(); //Oculta el título de la aplicación
         setContentView(R.layout.activity_registro);
 
         // Llamada a los métodos de inicialización
