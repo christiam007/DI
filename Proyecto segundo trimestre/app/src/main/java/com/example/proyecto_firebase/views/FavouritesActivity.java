@@ -29,6 +29,7 @@ public class FavouritesActivity extends AppCompatActivity implements PeliculaAda
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getSupportActionBar().hide(); //Oculta el título de la aplicación
         binding = DataBindingUtil.setContentView(this, R.layout.activity_favourites);
 
         // Inicializar Firebase
